@@ -1,37 +1,37 @@
 = LeafletDotNet
 
-https://leafletjs.com/[Leaflet] ‚Ì .NET ƒ‰ƒbƒp[‚Å‚·BLeaflet ‚Ì‘€ì‚ğ .NET ‚Ås‚¤‚±‚Æ‚ªo—ˆ‚Ü‚·B
+https://leafletjs.com/[Leaflet] ã® .NET ãƒ©ãƒƒãƒ‘ãƒ¼ã§ã™ã€‚Leaflet ã®æ“ä½œã‚’ .NET ã§è¡Œã†ã“ã¨ãŒå‡ºæ¥ã¾ã™ã€‚
 
-Leaflet ‚Ì“®ì‚É‚Í https://docs.microsoft.com/ja-jp/microsoft-edge/webview2/[WebView2] ‚ğg‚Á‚Ä‚¢‚Ü‚·B
+Leaflet ã®å‹•ä½œã«ã¯ https://docs.microsoft.com/ja-jp/microsoft-edge/webview2/[WebView2] ã‚’ä½¿ã£ã¦ã„ã¾ã™ã€‚
 
-== —á) Windows Form ‚Å’n—‰@’n}‚ğ•\¦‚·‚é
+== ä¾‹) Windows Form ã§åœ°ç†é™¢åœ°å›³ã‚’è¡¨ç¤ºã™ã‚‹
 
-Form ‚É WebView ‚ğ“\‚è•t‚¯ˆÈ‰º‚Ì‚æ‚¤‚ÉÀ‘•‚µ‚Ü‚·B
+Form ã« WebView2 ã‚’è²¼ã‚Šä»˜ã‘ä»¥ä¸‹ã®ã‚ˆã†ã«å®Ÿè£…ã—ã¾ã™ã€‚
 
 [source,c#]
 ----
 private async void Form_Load(object sender, EventArgs e)
 {
-    // Leaflet ƒIƒuƒWƒFƒNƒg‚Ìì¬: ˆø”‚É WebView2#CoreWebView2 ‚ğ“n‚·
+    // Leaflet ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ä½œæˆ: å¼•æ•°ã« WebView2#CoreWebView2 ã‚’æ¸¡ã™
     _leaflet = await Leaflet.CreateAsync(webView2.CoreWebView2);
 
-    // map ‚Ìì¬: L.map() ‚É‘Š“–
+    // map ã®ä½œæˆ: L.map() ã«ç›¸å½“
     var map = await _leaflet.Map();
 
-    // tileLayer ‚Ìì¬: L.tileMap() ‚É‘Š“–
+    // tileLayer ã®ä½œæˆ: L.tileMap() ã«ç›¸å½“
     var layer = await _leaflet.TileLayer(
         "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
         new LeafletTileLayerOptions()
         {
-            Attribution = @"<a href=""https://""></a>’n—‰@’n}",
+            Attribution = @"<a href=""https://""></a>åœ°ç†é™¢åœ°å›³",
             MinZoom = 5,
             MaxZoom = 18
         });
 
-    // tileLayer ‚ğ’n}‚É’Ç‰Á: layer.addTo(map) ‚É‘Š“–
+    // tileLayer ã‚’åœ°å›³ã«è¿½åŠ : layer.addTo(map) ã«ç›¸å½“
     await layer.AddTo(map);
 
-    // •\¦”ÍˆÍ‚ğİ’è: map.setView() ‚É‘Š“–
+    // è¡¨ç¤ºç¯„å›²ã‚’è¨­å®š: map.setView() ã«ç›¸å½“
     await map.SetView(new LeafletLatLng(35.681178, 139.767723), 13, new LeafletZoomPanOptions()
     {
         Animate = true
