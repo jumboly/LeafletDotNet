@@ -30,7 +30,6 @@ namespace Sandbox.WinForms
         private void InitializeComponent()
         {
             this.webView = new Microsoft.Web.WebView2.WinForms.WebView2();
-            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.webView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -41,28 +40,17 @@ namespace Sandbox.WinForms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.webView.CreationProperties = null;
             this.webView.DefaultBackgroundColor = System.Drawing.Color.White;
-            this.webView.Location = new System.Drawing.Point(12, 41);
+            this.webView.Location = new System.Drawing.Point(12, 12);
             this.webView.Name = "webView";
-            this.webView.Size = new System.Drawing.Size(776, 397);
+            this.webView.Size = new System.Drawing.Size(776, 426);
             this.webView.TabIndex = 0;
             this.webView.ZoomFactor = 1D;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(12, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.webView);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -75,7 +63,6 @@ namespace Sandbox.WinForms
         #endregion
 
         private Microsoft.Web.WebView2.WinForms.WebView2 webView;
-        private System.Windows.Forms.Button button1;
     }
 }
 

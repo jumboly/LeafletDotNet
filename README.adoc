@@ -1,0 +1,40 @@
+= LeafletDotNet
+
+https://leafletjs.com/[Leaflet] の .NET ラッパーです。Leaflet の操作を .NET で行うことが出来ます。
+
+Leaflet の動作には https://docs.microsoft.com/ja-jp/microsoft-edge/webview2/[WebView2] を使っています。
+
+== 例) Windows Form で地理院地図を表示する
+
+Form に WebView を貼り付け以下のように実装します。
+
+[source,c#]
+----
+private async void Form_Load(object sender, EventArgs e)
+{
+    // Leaflet オブジェクトの作成: 引数に WebView2#CoreWebView2 を渡す
+    _leaflet = await Leaflet.CreateAsync(webView2.CoreWebView2);
+
+    // map の作成: L.map() に相当
+    var map = await _leaflet.Map();
+
+    // tileLayer の作成: L.tileMap() に相当
+    var layer = await _leaflet.TileLayer(
+        "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
+        new LeafletTileLayerOptions()
+        {
+            Attribution = @"<a href=""https://""></a>地理院地図",
+            MinZoom = 5,
+            MaxZoom = 18
+        });
+
+    // tileLayer を地図に追加: layer.addTo(map) に相当
+    await layer.AddTo(map);
+
+    // 表示範囲を設定: map.setView() に相当
+    await map.SetView(new LeafletLatLng(35.681178, 139.767723), 13, new LeafletZoomPanOptions()
+    {
+        Animate = true
+    });
+}
+----

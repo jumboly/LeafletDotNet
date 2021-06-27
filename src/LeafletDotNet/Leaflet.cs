@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using LeafletDotNet.Extensions;
 using Microsoft.Web.WebView2.Core;
@@ -10,6 +11,18 @@ namespace LeafletDotNet
         public static async Task<Leaflet> CreateAsync(CoreWebView2 coreWebView2)
         {
             await coreWebView2.LoadHtmlStringAsync(Properties.Resources.map);
+
+            // 外部リンクは標準ブラウザで表示
+            coreWebView2.NavigationStarting += (sender, args) =>
+            {
+                args.Cancel = true;
+                Process.Start(new ProcessStartInfo
+                {
+                    UseShellExecute = true,
+                    FileName = args.Uri
+                });
+            };
+
             return new Leaflet(coreWebView2);
         }
 
