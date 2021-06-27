@@ -23,7 +23,7 @@ private async void Form_Load(object sender, EventArgs e)
         "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
         new LeafletTileLayerOptions()
         {
-            Attribution = @"<a href=""https://""></a>地理院地図",
+            Attribution = "<a href=\"https://maps.gsi.go.jp/\"></a>地理院地図",
             MinZoom = 5,
             MaxZoom = 18
         });
