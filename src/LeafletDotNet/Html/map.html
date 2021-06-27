@@ -1,0 +1,61 @@
+﻿<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<title>LeafletDotNet</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+<style>
+body {
+    padding: 0;
+    margin: 0;
+}
+html, body, #mapElement {
+    height: 100%;
+    width: 100%;
+}
+</style>
+</head>
+<body>
+<div id="mapElement"></div>
+<script>
+'use strict';
+window.onload = () => {
+    const idName = '___leaflet_object_id___';
+    const objectMap = new Map();
+    const log = console.log;
+    const wrap = (id, value) => {
+        log('wrap:id', id, 'value', value);
+        if (!value[idName]) {
+            value[idName] = id;
+            objectMap[id] = value;
+        }
+        return value;
+    };
+    const unwrap = value => {
+        log('unwrap:value', value);
+        return objectMap[value] ?? value;
+    };
+    window.create = args => {
+        log('create:args', args);
+        try {
+            wrap(args.id, L[args.function](...(args.parameters.map(unwrap))));
+        } catch (e) {
+            log('create:error', e);
+        } 
+    };
+    window.invoke = args => {
+        log('invoke', args);
+        try {
+            unwrap(args.id)[args.function](...(args.parameters.map(unwrap)));
+        } catch (e) {
+            log('invoke:error', e);
+        }
+    };
+};
+</script>
+</body>
+</html>

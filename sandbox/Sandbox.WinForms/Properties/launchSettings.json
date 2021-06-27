@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Sandbox.WinForms": {
+      "commandName": "Project",
+      "jsWebView2Debugging": false
+    }
+  }
+}
