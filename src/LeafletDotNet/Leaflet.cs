@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Text.Json;
 using System.Threading.Tasks;
 using LeafletDotNet.Extensions;
 using Microsoft.Web.WebView2.Core;
@@ -8,6 +9,8 @@ namespace LeafletDotNet
 {
     public class Leaflet
     {
+        private readonly JsonSerializerOptions _jsonSerializerOptions = new(JsonSerializerDefaults.Web);
+
         public static async Task<Leaflet> CreateAsync(CoreWebView2 coreWebView2)
         {
             await coreWebView2.LoadHtmlStringAsync(Properties.Resources.map);
@@ -41,6 +44,11 @@ namespace LeafletDotNet
         public Task<LeafletTileLayer> TileLayer(string urlTemplate, LeafletTileLayerOptions options = null)
         {
             return Create<LeafletTileLayer>("tileLayer", urlTemplate, options);
+        }
+
+        public Task<LeafletGeoJSON> GeoJSON(string data, LeafletGeoJSONOptions options = null)
+        {
+            return Create<LeafletGeoJSON>("geoJSON", JsonSerializer.Deserialize<JsonDocument>(data), options);
         }
 
         private async Task<T> Create<T>(string function, params object[] parameters)
