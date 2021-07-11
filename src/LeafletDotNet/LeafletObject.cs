@@ -29,14 +29,22 @@ namespace LeafletDotNet
 
         ~LeafletObject()
         {
-            _ = Leaflet.Dispose(this);
+            _ = DisposeAsync(false);
         }
 
         public async ValueTask DisposeAsync()
         {
-            await Leaflet.Dispose(this);
-            _objects.TryRemove(this.Id, out _);
+            await DisposeAsync(true);
             GC.SuppressFinalize(this);
+        }
+
+        protected virtual async ValueTask DisposeAsync(bool disposing)
+        {
+            if (disposing)
+            {
+            }
+            _objects.TryRemove(Id, out _);
+            await Leaflet.Dispose(this);
         }
 
         internal Guid Id { get; }
