@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using LeafletDotNet.Extensions;
@@ -13,7 +16,12 @@ namespace LeafletDotNet
 
         public static async Task<Leaflet> CreateAsync(CoreWebView2 coreWebView2)
         {
-            await coreWebView2.LoadHtmlStringAsync(Properties.Resources.map);
+            // リソースからHTML読み込み
+            await using var stream = typeof(Leaflet).Assembly.GetManifestResourceStream($"{typeof(Leaflet).Namespace}.Html.map.html");
+            Debug.Assert(stream != null);
+            using var reader = new StreamReader(stream);
+
+            await coreWebView2.LoadHtmlStringAsync(await reader.ReadToEndAsync());
 
             // 外部リンクは標準ブラウザで表示
             coreWebView2.NavigationStarting += (sender, args) =>
@@ -34,6 +42,7 @@ namespace LeafletDotNet
         private Leaflet(CoreWebView2 coreWebView2)
         {
             _coreWebView2 = coreWebView2;
+            _coreWebView2.WebMessageReceived += CoreWebView2OnWebMessageReceived;
         }
 
         public Task<LeafletMap> Map(LeafletMapOptions options = null)
@@ -51,23 +60,22 @@ namespace LeafletDotNet
             return Create<LeafletGeoJSON>("geoJSON", JsonSerializer.Deserialize<JsonDocument>(data), options);
         }
 
-        private async Task<T> Create<T>(string function, params object[] parameters)
-            where T: LeafletObject, new()
+        internal async Task<T> Create<T>(string function, params object[] parameters)
+            where T: LeafletClass, new()
         {
-            var id = Guid.NewGuid();
-            await _coreWebView2.InvokeAsync("create", new
+            var obj = new T();
+
+            await _coreWebView2.InvokeAsync("__create", new
             {
-                id, function, parameters
+                obj.Id, function, parameters
             });
 
-            var obj = new T();
-            obj.Id = id;
             obj.Leaflet = this;
 
             return obj;
         }
 
-        internal async Task Invoke(LeafletObject leafletObject, string function, params object[] parameters)
+        internal async Task Invoke(LeafletObject target, string function, params object[] parameters)
         {
             for (int i = 0; i < parameters.Length; i++)
             {
@@ -76,10 +84,45 @@ namespace LeafletDotNet
                     parameters[i] = obj.Id;
                 }
             }
-            await _coreWebView2.InvokeAsync("invoke", new
+            await _coreWebView2.InvokeAsync("__invoke", new
             {
-                leafletObject.Id, function, parameters
+                target.Id, function, parameters
             });
+        }
+
+        internal async Task Callback(LeafletCallback callback)
+        {
+            await _coreWebView2.InvokeAsync("__callback", new
+            {
+                callback.Id
+            });
+        }
+
+        internal async Task Dispose(LeafletObject target)
+        {
+            await _coreWebView2.InvokeAsync("__dispose", new
+            {
+                target.Id
+            });
+        }
+
+        private void CoreWebView2OnWebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
+        {
+            var message = JsonSerializer.Deserialize<Message>(e.WebMessageAsJson, _jsonSerializerOptions);
+            var callback = LeafletObject.GetOrNull(message.Id) as LeafletCallback;
+            callback?.Invoke(message.Event);
+        }
+
+        class Message
+        {
+            public Message(Guid id, JsonElement @event)
+            {
+                Id = id;
+                Event = @event;
+            }
+
+            public Guid Id { get; }
+            public JsonElement Event { get; }
         }
     }
 }

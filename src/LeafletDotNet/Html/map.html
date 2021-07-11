@@ -25,8 +25,8 @@ html, body, #mapElement {
 'use strict';
 window.onload = () => {
     const idName = '___leaflet_object_id___';
-    const objectMap = new Map();
-    const log = console.log;
+    const objectMap = new window.Map();
+    const log = window.console.log;
     const wrap = (id, value) => {
         log('wrap:id', id, 'value', value);
         if (!value[idName]) {
@@ -39,22 +39,115 @@ window.onload = () => {
         log('unwrap:value', value);
         return objectMap[value] ?? value;
     };
-    window.create = args => {
-        log('create:args', args);
+    window.__dispose = args => {
+        log('__dispose:args', args)
         try {
-            wrap(args.id, L[args.function](...(args.parameters.map(unwrap))));
+            if (objectMap[args.id]) {
+                log('__dispose:disposed', args.id);
+                objectMap.delete(args.id);
+            }
         } catch (e) {
-            log('create:error', e);
+            log('__dispose:error', e);
         } 
     };
-    window.invoke = args => {
-        log('invoke', args);
+    window.__create = args => {
+        log('__create:args', args);
+        try {
+            wrap(args.id, window.L[args.function](...(args.parameters.map(unwrap))));
+        } catch (e) {
+            log('__create:error', e);
+        } 
+    };
+    window.__invoke = args => {
+        log('__invoke:args', args);
         try {
             unwrap(args.id)[args.function](...(args.parameters.map(unwrap)));
         } catch (e) {
-            log('invoke:error', e);
+            log('__invoke:error', e);
         }
     };
+    window.__callback = (() => {
+        const fValue = v => v;
+        const fObject = v => v[idName];
+        const fMap = (v, map) => {
+            const ret = {};
+            for (const p in map) {
+                if (v[p]) {
+                    ret[p] = map[p](v[p]);
+                }
+            }
+            return ret;
+        };
+        const fDomEvent = (() => {
+            const map = {
+                // keyboard event
+                ...{
+                    altKey: fValue,
+                    code: fValue,
+                    ctrlKey: fValue,
+                    isComposing: fValue,
+                    key: fValue,
+                    locale: fValue,
+                    location: fValue,
+                    metaKey: fValue,
+                    repeat: fValue,
+                    shiftKey: fValue,
+                },
+                // mouse event
+                ...{
+                    altKey: fValue,
+                    button: fValue,
+                    buttons: fValue,
+                    clientX: fValue,
+                    clientY: fValue,
+                    ctrlKey: fValue,
+                    metaKey: fValue,
+                }
+            }
+            return v => fMap(v, map);
+        })();
+        const fEvent = (() => {
+            const map = {
+                // Event
+                ...{
+                    type: fValue,
+                    target: fObject,
+                    sourceTarget: fObject,
+                },
+                // KeyboardEvent
+                ...{
+                    originalEvent: fDomEvent,
+                },
+                // MouseEvent
+                ...{
+                    latlng: fValue,
+                    layerPoint: fValue,
+                    containerPoint: fValue,
+                    originalEvent: fDomEvent,
+                }
+            };
+            return v => fMap(v, map);
+        })();
+        const postMessage = (id, event) => {
+            log('postMessage:event', event)
+            try {
+                event = fEvent(event);
+                const params = { id, event };
+                log('postMessage:params', params);
+                window.chrome.webview.postMessage(params);
+            } catch (e) {
+                log('postMessage:error', e);
+            } 
+        };
+        return args => {
+            log('__callback:args', args);
+            try {
+                wrap(args.id, event => postMessage(args.id, event));
+            } catch (e) {
+                log('__callback:error', e);
+            }
+        };
+    })();
 };
 </script>
 </body>
