@@ -7,7 +7,7 @@ using Microsoft.Web.WebView2.Core;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Web.WebView2.WinForms
 {
-    public static class WebView2Extensions
+    static class WebView2Extensions
     {
         public static async Task EnsureRuntimeAsync(this WebView2 webView2, string runtileFolder = default)
         {

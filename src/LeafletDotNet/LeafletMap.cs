@@ -8,7 +8,7 @@ using Microsoft.Web.WebView2.Core;
 
 namespace LeafletDotNet
 {
-    public class LeafletMap : LeafletObject
+    public class LeafletMap : LeafletEvented
     {
         public async Task<LeafletMap> SetView(LeafletLatLng latLng, int zoom, LeafletZoomPanOptions options = null)
         {

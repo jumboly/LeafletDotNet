@@ -27,8 +27,6 @@ namespace Sandbox.WinForms
 
         private async void Form1_Load(object sender, EventArgs e)
         {
-            await webView.EnsureRuntimeAsync();
-
             _leaflet = await Leaflet.CreateAsync(webView.CoreWebView2);
 
             var map = await _leaflet.Map();

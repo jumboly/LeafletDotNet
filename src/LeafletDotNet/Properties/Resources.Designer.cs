@@ -59,23 +59,5 @@ namespace LeafletDotNet.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   &lt;html lang=&quot;ja&quot;&gt;
-        ///&lt;head&gt;
-        ///&lt;meta charset=&quot;utf-8&quot; /&gt;
-        ///&lt;title&gt;LeafletDotNet&lt;/title&gt;
-        ///&lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/leaflet@1.7.1/dist/leaflet.css&quot;
-        ///      integrity=&quot;sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==&quot;
-        ///      crossorigin=&quot;&quot; /&gt;
-        ///&lt;script src=&quot;https://unpkg.com/leaflet@1.7.1/dist/leaflet.js&quot;
-        ///        integrity=&quot;sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==&quot;
-        ///        crossorigin=&quot;&quot;&gt;&lt;/scrip [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string map {
-            get {
-                return ResourceManager.GetString("map", resourceCulture);
-            }
-        }
     }
 }

@@ -16,5 +16,10 @@ namespace LeafletDotNet
 
         public double Lat { get; }
         public double Lng { get; }
+
+        public override string ToString()
+        {
+            return $"{nameof(Lat)}: {Lat}, {nameof(Lng)}: {Lng}";
+        }
     }
 }
